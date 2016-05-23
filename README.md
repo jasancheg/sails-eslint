@@ -4,9 +4,9 @@
 [Sails JS](http://sailsjs.org) hook to activate [ESLint](http://eslint.org/) in your sails app.
 
 
-Here is how eslint log looks like:
+Here is how eslint log looks like ([sample](https://github.com/jasancheg/sails-eslint/blob/master/assets/pic.png)):
 
-![](https://github.com/jasancheg/sails-eslint/blob/master/assets/pic.png)
+![](https://raw.githubusercontent.com/jasancheg/sails-eslint/master/assets/pic.png)
 
 ### Installation
 
