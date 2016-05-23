@@ -1,0 +1,6 @@
+{
+  "extends": "../.eslintrc",
+  "rules": {
+    "strict": [2, "global"]
+  }
+}

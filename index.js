@@ -1,11 +1,16 @@
-// oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+//                        \│/  ╦ ╦╔═╗╦═╗╔╗╔╦╔╗╔╔═╗  \│/
+//      ─────────────────── ─  ║║║╠═╣╠╦╝║║║║║║║║ ╦  ─ ───────────────────
+//                        /│\  ╚╩╝╩ ╩╩╚═╝╚╝╩╝╚╝╚═╝  /│\
+//      ┬ ┬┌┐┌┌┬┐┌─┐┌─┐┬ ┬┌┬┐┌─┐┌┐┌┌┬┐┌─┐┌┬┐  ┌─┐┌─┐┬┌─┐  ┬┌┐┌  ┬ ┬┌─┐┌─┐
+//      │ ││││ │││ ││  │ ││││├┤ │││ │ ├┤  ││  ├─┤├─┘│└─┐  ││││  │ │└─┐├┤
+//      └─┘┘└┘─┴┘└─┘└─┘└─┘┴ ┴└─┘┘└┘ ┴ └─┘─┴┘  ┴ ┴┴  ┴└─┘  ┴┘└┘  └─┘└─┘└─┘
+// ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 // WARNING: THIS HOOK USES PRIVATE, UNDOCUMENTED APIs THAT COULD CHANGE AT ANY TIME
-// oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-// This hook uses an undocumented, private Sails core method in order to reload controllers without
-// having to lower/re-lift an app. You should not copy or reuse that code (clearly marked below) in an
-// app, because future releases of Sails--even patch releases--may cause it to stop functioning.
-// The private API usage used below will be replaced by a public method as soon as it is available.
-// In the meantime, enjoy, and as stated in the README, do not turn this hook on in production!
+// ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+// This hook uses an undocumented, private Sails core method, you should not copy
+// or reuse code because future releases of Sails--even patch releases--may cause
+// it to stop functioning, do not turn this hook on in production!
+
 var glob = require('glob');
 var path = require('path');
 var chalk = require('chalk');
@@ -19,18 +24,35 @@ function runLint(dir, format) {
 
   if (report && report.errorCount > 0) {
     console.log(
-      chalk.red('error: Code did not pass lint rules') +
+      chalk.red('eslint[') + dir.replace(process.cwd(), '') + chalk.red(']: Code did not pass lint rules') +
       formatter(report.results)
     );
   } else {
     if (report && report.warningCount > 0 ) {
       console.log(formatter(report.results));
+    } else {
+      console.log(
+      chalk.green('eslint[') + dir.replace(process.cwd(), '') + chalk.green(']: All tests pass') +
+      formatter(report.results)
+    );
     }
   }
 }
 
+function processingQueue(dirs, format) {
+  dirs.forEach(function (dir) {
+    if (glob.hasMagic(dir)) {
+      glob.sync(dir).forEach(function (file) {
+        runLint(file, format);
+      });
+    } else {
+      runLint(dir, format);
+    }
+  });
+}
+
 module.exports = function (sails) {
-  console.log(process.cwd(), path.join(__dirname, 'node_modules', 'eslint-formatter-pretty'))
+
   return {
 
     /**
@@ -52,8 +74,8 @@ module.exports = function (sails) {
         formatter: path.join(__dirname, 'node_modules', 'eslint-formatter-pretty'),
         // decide which folders/dirs should be checked
         dirs: [
-          path.resolve(sails.config.appPath, 'api'),
-          path.resolve(sails.config.appPath, 'config')
+          path.resolve(sails.config.appPath, 'config'),
+          path.resolve(sails.config.appPath, 'api')
         ],
         // Ignored paths, passed to anymatch
         // String to be directly matched, string with glob patterns,
@@ -93,12 +115,12 @@ module.exports = function (sails) {
 
       // If the hook has been deactivated, just return
       if (!sails.config[this.configKey].active) {
-        sails.log.verbose('Eslint hook deactivated.');
+        sails.log.verbose('eslint hook deactivated.');
         return cb();
       } else {
 
         var format = sails.config[this.configKey].formatter || 'stylish';
-        var dirs = sails.config[this.configKey].dirs || ['api', 'config'];
+        var dirs = sails.config[this.configKey].dirs || ['config', 'api'];
         var formatDirs = [];
         var paths = '';
 
@@ -109,18 +131,21 @@ module.exports = function (sails) {
           paths = chalk.yellow('\n' + formatDirs.join('\n'));
         }
 
-        sails.log.verbose("Eslint watching: ", sails.config[this.configKey].dirs);
-        sails.log.info(chalk.blue("Eslint watching:"), paths);
+        // Run First eslint Test
+        sails.log.verbose("ESlint watching", sails.config[this.configKey].dirs);
+        sails.log.info("ESlint watching...");//, paths);
+        processingQueue(dirs, format);
 
-        dirs.forEach(function (dir) {
-          if (glob.hasMagic(dir)) {
-            glob.sync(dir).forEach(function (file) {
-              runLint(file, format);
-            });
-          } else {
-            runLint(dir, format);
-          }
-        });
+        // Whenever something changes in those dirs, run eslint
+        // Debounce the event handler so that it only fires after receiving all of the change
+        // events.
+        watcher.on('all', sails.util.debounce(function(action, path, stats) {
+          sails.log.verbose("Detected API change -- running eslint...");
+
+          processingQueue([path], format);
+
+        }, 100));
+
         return cb();
       }
     }
