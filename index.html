@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Sails-eslint by jasancheg</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Sails-eslint</h1>
+        <h2>Sails JS hook to activate ESLint in your sails app.</h2>
+        <a href="https://github.com/jasancheg/sails-eslint" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="sails-eslint" class="anchor" href="#sails-eslint" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>sails-eslint</h1>
+
+<p><a href="https://npmjs.org/package/sails-eslint"><img src="https://badge.fury.io/js/sails-eslint.svg" alt="npm version"></a> <a href="https://david-dm.org/jasancheg/sails-eslint"><img src="https://img.shields.io/david/jasancheg/sails-eslint.svg?style=flat" alt="Dependency Status"></a></p>
+
+<p><a href="http://sailsjs.org">Sails JS</a> hook to activate <a href="http://eslint.org/">ESLint</a> in your sails app.</p>
+
+<p>Here is how eslint log looks like (<a href="https://github.com/jasancheg/sails-eslint/blob/master/assets/pic.png">sample</a>):</p>
+
+<p><img src="https://raw.githubusercontent.com/jasancheg/sails-eslint/master/assets/pic.png" alt=""></p>
+
+<h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h3>
+
+<p><code>npm install sails-eslint</code></p>
+
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h3>
+
+<p><em>requires at least sails &gt;= 0.11</em></p>
+
+<p>Make sure you have a <a href="http://eslint.org/docs/user-guide/configuring">.eslintrc</a> in your root folder. Then just lift your app as normal, and enjoy the power of linting. For an example of an <code>.eslintrc</code> file see: <a href="https://github.com/jasancheg/sails-eslint/blob/master/.eslintrc">https://github.com/jasancheg/sails-eslint/blob/master/.eslintrc</a></p>
+
+<h3>
+<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuration</h3>
+
+<p>By default, configuration lives in <code>sails.config.eslint</code>.  The configuration key (<code>eslint</code>) can be changed by setting <code>sails.config.hooks['sails-eslint'].configKey</code>.</p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th align="left">Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>active</td>
+<td>((boolean))</td>
+<td align="left">Whether or not sails should lint your JS code.  Defaults to <code>true</code>.</td>
+</tr>
+<tr>
+<td>formatter</td>
+<td>((string))</td>
+<td align="left">Which formatter to use.  Defaults to <a href="https://github.com/sindresorhus/eslint-formatter-pretty"><code>'eslint-formatter-pretty'</code></a>.</td>
+</tr>
+<tr>
+<td>usePolling</td>
+<td>((boolean))</td>
+<td align="left">Whether or not to use the polling feature. Slower but necessary for certain environments. Defaults to <code>false</code>.</td>
+</tr>
+<tr>
+<td>dirs</td>
+<td>((array))</td>
+<td align="left">Array of strings indicating Which folders or glob patterns to lint and watch.  Defaults to <code>[path.resolve(sails.config.appPath, 'api'), path.resolve(sails.config.appPath, 'config')]</code>.</td>
+</tr>
+<tr>
+<td>ignored</td>
+<td>((array|string|regexp|function))</td>
+<td align="left">Files and/or directories to be ignored. Pass a string to be directly matched, string with glob patterns, regular expression test, function that takes the testString as an argument and returns a truthy value if it should be matched, or an array of any number and mix of these types. For more examples look up <a href="https://github.com/es128/anymatch">anymatch docs</a>.</td>
+</tr>
+</tbody>
+</table>
+
+<h4>
+<a id="example-only-if-you-want-to-change-the-default-configuration" class="anchor" href="#example-only-if-you-want-to-change-the-default-configuration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example (only if you want to change the default configuration!!)</h4>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// [your-sails-app]/config/eslint.js</span>
+<span class="pl-c1">module</span>.<span class="pl-smi">exports</span>.<span class="pl-smi">eslint</span> <span class="pl-k">=</span> {
+  active<span class="pl-k">:</span> <span class="pl-c1">true</span>,
+  usePolling<span class="pl-k">:</span> <span class="pl-c1">false</span>,
+  formatter<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>stylish<span class="pl-pds">'</span></span>,
+  dirs<span class="pl-k">:</span> [
+    <span class="pl-s"><span class="pl-pds">"</span>api<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>config<span class="pl-pds">"</span></span>
+  ],
+  ignored<span class="pl-k">:</span> [
+    <span class="pl-s"><span class="pl-pds">"</span>api/policies<span class="pl-pds">"</span></span>
+  ]
+};
+</pre></div>
+
+<p>That’s it!</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/jasancheg/sails-eslint/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/jasancheg/sails-eslint/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/jasancheg/sails-eslint"></a> is maintained by <a href="https://github.com/jasancheg">jasancheg</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
