@@ -14,8 +14,6 @@
 var glob = require('glob');
 var path = require('path');
 var chalk = require('chalk');
-var eslintFormatterPretty = require('eslint-formatter-pretty');
-
 // Initialize eslint cli engine
 var CLI = require('eslint').CLIEngine;
 var cli = new CLI({});
