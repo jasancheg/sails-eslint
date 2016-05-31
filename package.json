@@ -1,6 +1,6 @@
 {
   "name": "sails-eslint",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Add eslint linting utility to Sails JS",
   "main": "index.js",
   "directories": {
@@ -32,7 +32,11 @@
     "chalk": "^1.1.3",
     "chokidar": "^1.5.1",
     "eslint": "^2.10.2",
-    "eslint-formatter-pretty": "*"
+    "ansi-escapes": "^1.4.0",
+    "log-symbols": "^1.0.2",
+    "plur": "^2.1.2",
+    "repeating": "^2.0.1",
+    "string-width": "^1.0.1"
   },
   "devDependencies": {
     "mocha": "^2.4.5",

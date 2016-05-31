@@ -71,7 +71,7 @@ module.exports = function (sails) {
         //slower but sometimes needed for VM environments
         usePolling: false,
         // choose which formatter to use
-        formatter: path.join(__dirname, 'node_modules', 'eslint-formatter-pretty'),
+        formatter: path.join(__dirname, 'pretty-formatter'),
         // decide which folders/dirs should be checked
         dirs: [
           path.resolve(sails.config.appPath, 'config'),
