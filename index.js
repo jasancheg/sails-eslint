@@ -30,7 +30,7 @@ function runLint(dir, format) {
   } else {
     if (report && report.warningCount > 0 ) {
       console.log(
-        chalk.yellow('eslint[') + dir.replace(process.cwd(), '') + chalk.red(']: Code did not pass lint rules') +
+        chalk.yellow('eslint[') + dir.replace(process.cwd(), '') + chalk.yellow(']: Code did not pass lint rules') +
         formatter(report.results)
       );
     } else {

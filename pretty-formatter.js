@@ -102,15 +102,11 @@ module.exports = function (results) {
     }).join('\n') + '\n\n';
 
     if (errorCount > 0) {
-        output += '  ' + chalk.red(logSymbols.error + ' ' + errorCount + ' ' + plur('error', errorCount)) + ' ';
+        output += '  ' + chalk.red(errorCount + ' ' + plur('error', errorCount)) + '\n';
     }
 
     if (warningCount > 0) {
-        output += '  ' + chalk.yellow(logSymbols.error + ' ' + warningCount + ' ' + plur('warning', warningCount));
-    }
-
-    if (warningCount > 0 || warningCount > 0) {
-        output += '\n';
+        output += '  ' + chalk.yellow(warningCount + ' ' + plur('warning', warningCount))+ '\n';
     }
 
     return (errorCount + warningCount) > 0 ? output : '';
