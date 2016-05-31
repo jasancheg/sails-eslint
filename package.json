@@ -1,6 +1,6 @@
 {
   "name": "sails-eslint",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Add eslint linting utility to Sails JS",
   "main": "index.js",
   "directories": {

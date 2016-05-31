@@ -1,12 +1,12 @@
 'use strict';
 
 var path = require('path');
-var chalk = require('chalk');
-var logSymbols = require('log-symbols');
 var plur = require('plur');
+var chalk = require('chalk');
+var repeating = require('repeating');
+var logSymbols = require('log-symbols');
 var stringWidth = require('string-width');
 var ansiEscapes = require('ansi-escapes');
-var repeating = require('repeating');
 var padding = repeating.bind(null, ' ');
 
 module.exports = function (results) {
@@ -16,6 +16,8 @@ module.exports = function (results) {
     var maxLineWidth = 0;
     var maxColumnWidth = 0;
     var maxMessageWidth = 0;
+
+    results = results && typeof results === 'object' ? results : [];
 
     results.forEach(function (result) {
         var messages = result.messages;
@@ -100,11 +102,15 @@ module.exports = function (results) {
     }).join('\n') + '\n\n';
 
     if (errorCount > 0) {
-        output += '  ' + chalk.red(errorCount + ' ' + plur('error', errorCount)) + '\n';
+        output += '  ' + chalk.red(logSymbols.error + ' ' + errorCount + ' ' + plur('error', errorCount)) + ' ';
     }
 
     if (warningCount > 0) {
-        output += '  ' + chalk.yellow(warningCount + ' ' + plur('warning', warningCount)) + '\n';
+        output += '  ' + chalk.yellow(logSymbols.error + ' ' + warningCount + ' ' + plur('warning', warningCount));
+    }
+
+    if (warningCount > 0 || warningCount > 0) {
+        output += '\n';
     }
 
     return (errorCount + warningCount) > 0 ? output : '';

@@ -54,4 +54,4 @@ That&rsquo;s it!
 
 ## License
 
-MIT © [Jose Antonio Sanchez](https://github.com/jasancheg/sails-eslint/blob/master/LICENSE)
+MIT © [jasancheg](https://github.com/jasancheg/sails-eslint/blob/master/LICENSE)
