@@ -98,6 +98,9 @@ module.exports = function(sails) {
     initialize: function(cb) {
       var self = this;
 
+      // check for global config and reassign configKey
+      if(sails.config.eslint && sails.config.eslint.dirs) this.configKey = 'eslint';
+
       // Initialize the file watcher to watch controller and model dirs
       var chokidar = require('chokidar');
       // Watch both the controllers and models directories

@@ -36,14 +36,14 @@ ignored       | ((array\|string\|regexp\|function)) |  Files and/or directories 
 // [your-sails-app]/config/eslint.js
 module.exports.eslint = {
   active: true,
-  usePolling: false,
-  formatter: 'stylish',
   dirs: [
-    "api",
-    "config"
-  ],
-  ignored: [
-    "api/policies"
+    'api/controllers',
+    'api/middlewares',
+    'api/mocks',
+    'api/models',
+    'api/policies',
+    'api/services',
+    'config'
   ]
 };
 
