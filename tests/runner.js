@@ -17,8 +17,8 @@ function addFiles(mocha, files) {
 
 addFiles(mocha, '/**/*-test.js');
 
-mocha.run(function (failures) {
-  process.on('exit', function () {
+mocha.run(function(failures) {
+  process.on('exit', function() {
     process.exit(failures); // eslint-disable-line no-process-exit
   });
 });
