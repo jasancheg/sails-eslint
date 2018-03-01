@@ -101,6 +101,12 @@ module.exports = function(sails) {
       // check for global config and reassign configKey
       if(sails.config.eslint && sails.config.eslint.dirs) this.configKey = 'eslint';
 
+      // If the hook has been deactivated, just return
+      if(!sails.config[this.configKey].active) {
+        sails.log.verbose('eslint hook deactivated.');
+        return cb();
+      }
+
       // Initialize the file watcher to watch controller and model dirs
       var chokidar = require('chokidar');
       // Watch both the controllers and models directories
@@ -112,39 +118,33 @@ module.exports = function(sails) {
         ignored: sails.config[this.configKey].ignored
       });
 
-      // If the hook has been deactivated, just return
-      if(!sails.config[this.configKey].active) {
-        sails.log.verbose('eslint hook deactivated.');
-        return cb();
-      } else {
-        var format = sails.config[this.configKey].formatter || 'stylish';
-        var dirs = sails.config[this.configKey].dirs || ['config', 'api'];
-        var formatDirs = [];
-        var paths = '';
+      var format = sails.config[this.configKey].formatter || 'stylish';
+      var dirs = sails.config[this.configKey].dirs || ['config', 'api'];
+      var formatDirs = [];
+      var paths = '';
 
-        if(sails.config[this.configKey].dirs) {
-          sails.config[this.configKey].dirs.forEach(function(item) {
-            formatDirs.push('path: ' + item.replace(process.cwd(), ''));
-          });
-          paths = chalk.yellow('\n' + formatDirs.join('\n'));
-        }
-
-        // Run First eslint Test
-        sails.log.verbose('ESlint watching', sails.config[this.configKey].dirs);
-        sails.log.info('ESlint watching...');//, paths);
-        processingQueue(dirs, format);
-
-        // Whenever something changes in those dirs, run eslint
-        // Debounce the event handler so that it only fires after receiving all of the change
-        // events.
-        watcher.on('all', sails.util.debounce(function(action, path, stats) {
-          sails.log.verbose('Detected API change -- running eslint...');
-
-          processingQueue([path], format);
-        }, 100));
-
-        return cb();
+      if(sails.config[this.configKey].dirs) {
+        sails.config[this.configKey].dirs.forEach(function(item) {
+          formatDirs.push('path: ' + item.replace(process.cwd(), ''));
+        });
+        paths = chalk.yellow('\n' + formatDirs.join('\n'));
       }
+
+      // Run First eslint Test
+      sails.log.verbose('ESlint watching', sails.config[this.configKey].dirs);
+      sails.log.info('ESlint watching...');//, paths);
+      processingQueue(dirs, format);
+
+      // Whenever something changes in those dirs, run eslint
+      // Debounce the event handler so that it only fires after receiving all of the change
+      // events.
+      watcher.on('all', sails.util.debounce(function(action, path, stats) {
+        sails.log.verbose('Detected API change -- running eslint...');
+
+        processingQueue([path], format);
+      }, 100));
+
+      return cb();
     }
   };
 };
