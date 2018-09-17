@@ -23,20 +23,11 @@ function runLint(dir, format) {
   var report = cli.executeOnFiles([dir]);
 
   if(report && report.errorCount > 0) {
-    console.log(
-      chalk.red('eslint[') + dir.replace(process.cwd(), '') + chalk.red(']: Code did not pass lint rules')
-      + formatter(report.results)
-    );
+    console.log(chalk.red('eslint[') + dir.replace(process.cwd(), '') + chalk.red(']: Code did not pass lint rules') + formatter(report.results));
   } else if(report && report.warningCount > 0) {
-    console.log(
-      chalk.yellow('eslint[') + dir.replace(process.cwd(), '') + chalk.yellow(']: Code did not pass lint rules')
-      + formatter(report.results)
-    );
+    console.log(chalk.yellow('eslint[') + dir.replace(process.cwd(), '') + chalk.yellow(']: Code did not pass lint rules') + formatter(report.results));
   } else {
-    console.log(
-      chalk.green('eslint[') + dir.replace(process.cwd(), '') + chalk.green(']: All tests pass')
-      + formatter(report.results)
-    );
+    console.log(chalk.green('eslint[') + dir.replace(process.cwd(), '') + chalk.green(']: All tests pass') + formatter(report.results));
   }
 }
 
@@ -53,14 +44,15 @@ function processingQueue(dirs, format) {
 }
 
 module.exports = function(sails) {
+  if(!sails.util) sails.util = _; //if sails does not contain lodash
   return {
     /**
-    * Default configuration
-    *
-    * We do this in a function since the configuration key for
-    * the hook is itself configurable, so we can't just return
-    * an object.
-    */
+     * Default configuration
+     *
+     * We do this in a function since the configuration key for
+     * the hook is itself configurable, so we can't just return
+     * an object.
+     */
     defaults: {
       __configKey__: {
         // Turn eslint on/off
@@ -71,10 +63,7 @@ module.exports = function(sails) {
         // choose which formatter to use
         formatter: path.join(__dirname, 'pretty-formatter'),
         // decide which folders/dirs should be checked
-        dirs: [
-          path.resolve(sails.config.appPath, 'config'),
-          path.resolve(sails.config.appPath, 'api')
-        ],
+        dirs: [path.resolve(sails.config.appPath, 'config'), path.resolve(sails.config.appPath, 'api')],
         // Ignored paths, passed to anymatch
         // String to be directly matched, string with glob patterns,
         // regular expression test, function
@@ -84,17 +73,18 @@ module.exports = function(sails) {
     },
 
     configure: function() {
-      sails.config[this.configKey].active = (typeof sails.config[this.configKey].active !== 'undefined')
-        // If an explicit value for the "active" config option is set, use it
-        ? sails.config[this.configKey].active
-        // Otherwise turn off in production environment, on for all others
-        : (sails.config.environment != 'production');
+      sails.config[this.configKey].active
+        = typeof sails.config[this.configKey].active !== 'undefined'
+          ? // If an explicit value for the "active" config option is set, use it
+          sails.config[this.configKey].active
+          : // Otherwise turn off in production environment, on for all others
+          sails.config.environment != 'production';
     },
 
     /**
-    * Initialize the hook
-    * @param  {Function} cb Callback for when we're done initializing
-    */
+     * Initialize the hook
+     * @param  {Function} cb Callback for when we're done initializing
+     */
     initialize: function(cb) {
       var self = this;
 
@@ -131,17 +121,20 @@ module.exports = function(sails) {
 
         // Run First eslint Test
         sails.log.verbose('ESlint watching', sails.config[this.configKey].dirs);
-        sails.log.info('ESlint watching...');//, paths);
+        sails.log.info('ESlint watching...'); //, paths);
         processingQueue(dirs, format);
 
         // Whenever something changes in those dirs, run eslint
         // Debounce the event handler so that it only fires after receiving all of the change
         // events.
-        watcher.on('all', sails.util.debounce(function(action, path, stats) {
-          sails.log.verbose('Detected API change -- running eslint...');
+        watcher.on(
+          'all',
+          sails.util.debounce(function(action, path, stats) {
+            sails.log.verbose('Detected API change -- running eslint...');
 
-          processingQueue([path], format);
-        }, 100));
+            processingQueue([path], format);
+          }, 100)
+        );
 
         return cb();
       }
